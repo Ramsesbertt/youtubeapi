@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class YouTubeApi {
-  final String _apiKey = 'TU_API_KEY'; // Inserta aquí tu clave de API
+  final String _apiKey = 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA'; // Inserta aquí tu clave de API
 
   Future<List<dynamic>> fetchVideos(String query) async {
     final url = Uri.parse(
