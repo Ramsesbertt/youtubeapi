@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class YouTubeApiService {
-  final String apiKey = 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA';  // Asegúrate de colocar tu API Key aquí.
+  final String apiKey = 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA';
   final String baseUrl = 'https://www.googleapis.com/youtube/v3';
 
   Future<List<Video>> fetchTrendingVideos() async {
