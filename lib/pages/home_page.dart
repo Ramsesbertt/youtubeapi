@@ -61,13 +61,62 @@ class _HomePageState extends State<HomePage> {
                     itemCount: videos.length,
                     itemBuilder: (context, index) {
                       final video = videos[index];
-                      return ListTile(
-                        leading: Image.network(video.thumbnailUrl),
-                        title: Text(video.title, style: const TextStyle(color: Colors.white)),
-                        subtitle: Text(video.channelTitle, style: const TextStyle(color: Colors.grey)),
-                        onTap: () {
-                          // Aquí podrías navegar a la página de detalle de cada video.
-                        },
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.all(8.0),
+                        color: const Color(0xFF1E1E1E), // Color de fondo del contenedor
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Imagen del video
+                            Image.network(
+                              video.thumbnailUrl,
+                              width: double.infinity, // Toma todo el ancho disponible
+                              height: 200, // Ajusta la altura según sea necesario
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Imagen de perfil del canal
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(video.thumbnailUrl),
+                                  radius: 30,
+                                ),
+                                const SizedBox(width: 10),
+                                // Título y nombre del canal
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Título del video
+                                      Text(
+                                        video.title,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      // Nombre del canal
+                                      Text(
+                                        video.channelTitle,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       );
                     },
                   );
