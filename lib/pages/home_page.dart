@@ -94,10 +94,10 @@ class _HomePageState extends State<HomePage> {
               shape: const StadiumBorder(), backgroundColor: Colors.white24,
             ),
             onPressed: () {},
-            icon: const Icon(Icons.explore, color: Colors.white),
+            icon: const Icon(Icons.explore, color: Color.fromARGB(255, 255, 249, 249)),
             label: const Text('Explorar', style: TextStyle(color: Colors.white)),
           ),
-          VerticalDivider(color: Colors.grey),
+          const VerticalDivider(color: Colors.grey),
           TextButton(
             onPressed: () {},
             child: const Text('Todos', style: TextStyle(color: Colors.white)),
