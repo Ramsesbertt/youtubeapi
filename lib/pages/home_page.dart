@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_api/services/youtube_api_service.dart';
+import 'package:intl/intl.dart'; // Asegúrate de que este paquete esté en tu pubspec.yaml
+import 'detail_video_page.dart'; // Importa la página de detalles
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -61,61 +63,70 @@ class _HomePageState extends State<HomePage> {
                     itemCount: videos.length,
                     itemBuilder: (context, index) {
                       final video = videos[index];
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(8.0),
-                        color: const Color(0xFF1E1E1E), // Color de fondo del contenedor
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Imagen del video
-                            Image.network(
-                              video.thumbnailUrl,
-                              width: double.infinity, // Toma todo el ancho disponible
-                              height: 200, // Ajusta la altura según sea necesario
-                              fit: BoxFit.cover,
+                      return GestureDetector(
+                        onTap: () {
+                          // Navega a la página de detalles del video
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DetailVideoPage(video: video),
                             ),
-                            const SizedBox(height: 10),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Imagen de perfil del canal
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(video.thumbnailUrl),
-                                  radius: 30,
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Video thumbnail
+                              AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: Image.network(video.thumbnailUrl, fit: BoxFit.cover),
+                              ),
+                              const SizedBox(height: 5),
+                              // Título del video
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  video.title,
+                                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(width: 10),
-                                // Título y nombre del canal
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Título del video
-                                      Text(
-                                        video.title,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 5),
-                                      // Nombre del canal
-                                      Text(
-                                        video.channelTitle,
-                                        style: const TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
+                              ),
+                              // Información del canal, vistas y tiempo
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Imagen del canal
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(video.channelThumbnailUrl),
+                                    radius: 15,
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  const SizedBox(width: 8), // Espacio entre la imagen del canal y el nombre
+                                  // Nombre del canal y detalles
+                                  Expanded(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        // Nombre del canal
+                                        Text(
+                                          video.channelTitle,
+                                          style: const TextStyle(color: Colors.white),
+                                        ),
+                                        const SizedBox(width: 8), // Espacio entre el nombre del canal y el texto de vistas/tiempo
+                                        // Vistas y tiempo
+                                        Text(
+                                          '${NumberFormat.compact().format(video.viewCount)} vistas - ${_timeAgo(video.publishedAt)}',
+                                          style: const TextStyle(color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -127,6 +138,22 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  String _timeAgo(String publishedAt) {
+    final dateTime = DateTime.parse(publishedAt);
+    final difference = DateTime.now().difference(dateTime);
+    if (difference.inDays >= 365) {
+      return '${(difference.inDays / 365).floor()} años';
+    } else if (difference.inDays >= 30) {
+      return '${(difference.inDays / 30).floor()} meses';
+    } else if (difference.inDays >= 1) {
+      return '${difference.inDays} días';
+    } else if (difference.inHours >= 1) {
+      return '${difference.inHours} horas';
+    } else {
+      return '${difference.inMinutes} minutos';
+    }
   }
 
   Widget _buildCategoryBar() {
@@ -164,4 +191,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+
+
 
