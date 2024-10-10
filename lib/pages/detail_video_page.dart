@@ -59,7 +59,7 @@ class DetailVideoPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            // Channel info
+            // Channel info in one line
             Row(
               children: [
                 // Channel image
@@ -68,21 +68,45 @@ class DetailVideoPage extends StatelessWidget {
                   radius: 20,
                 ),
                 const SizedBox(width: 8.0),
-                // Channel name and subscriber count
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      video.channelTitle,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    Text(
-                      "33.2 M", // Placeholder for subscriber count, you can add a property for subscribers in Video
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
+                // Channel name and subscriber count in one line
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        video.channelTitle,
+                        style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 8.0),
+                      Text(
+                        "33.2 M suscriptores", // Placeholder for subscriber count
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
               ],
+            ),
+            const SizedBox(height: 16.0),
+            // Action buttons: like, dislike, share, etc.
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildOvalButton(Icons.thumb_up, "2.5 K"), // Likes
+                  _buildDivider(),
+                  _buildOvalButton(Icons.thumb_down, ""), // Dislike
+                  _buildDivider(),
+                  _buildOvalButton(Icons.share, "Compartir"), // Share
+                  _buildDivider(),
+                  _buildOvalButton(Icons.block, "Detener anuncio"), // Stop Ad
+                  _buildDivider(),
+                  _buildOvalButton(Icons.cut, "Recortar"), // Clip
+                  _buildDivider(),
+                  _buildOvalButton(Icons.bookmark, "Guardar"), // Save
+                  _buildDivider(),
+                  _buildOvalButton(Icons.flag, "Denunciar"), // Report
+                ],
+              ),
             ),
           ],
         ),
@@ -91,6 +115,39 @@ class DetailVideoPage extends StatelessWidget {
     );
   }
 
+  // Button builder with icon and text inside an oval
+  Widget _buildOvalButton(IconData icon, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(30.0),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: Colors.white),
+                if (label.isNotEmpty) ...[
+                  const SizedBox(width: 8.0),
+                  Text(label, style: const TextStyle(color: Colors.white)),
+                ]
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Divider between the buttons
+  Widget _buildDivider() {
+    return const SizedBox(width: 8.0);
+  }
+
+  // Format the views with "K" for thousands and "M" for millions
   String _formatViews(int viewCount) {
     if (viewCount >= 1000000) {
       return "${(viewCount / 1000000).toStringAsFixed(1)} M";
@@ -101,6 +158,7 @@ class DetailVideoPage extends StatelessWidget {
     }
   }
 
+  // Calculate how long ago the video was published
   String _timeAgo(String publishedAt) {
     final DateTime publishDate = DateTime.parse(publishedAt);
     final Duration diff = DateTime.now().difference(publishDate);
@@ -120,3 +178,5 @@ class DetailVideoPage extends StatelessWidget {
     }
   }
 }
+
+
