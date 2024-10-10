@@ -1,11 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_api/services/youtube_api_service.dart';
+import 'package:youtube_api/services/youtube_comments_service.dart'; // Importa el servicio de comentarios
 import 'package:intl/intl.dart'; // Para formatear el número de vistas
+import 'package:youtube_api/models/comments_page.dart'; // Importa el modelo de comentarios
 
-class DetailVideoPage extends StatelessWidget {
+class DetailVideoPage extends StatefulWidget {
   final Video video;
 
   const DetailVideoPage({Key? key, required this.video}) : super(key: key);
+
+  @override
+  _DetailVideoPageState createState() => _DetailVideoPageState();
+}
+
+class _DetailVideoPageState extends State<DetailVideoPage> {
+  late Future<List<Comment>> _commentsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _commentsFuture = _fetchComments();
+  }
+
+  Future<List<Comment>> _fetchComments() async {
+  try {
+    final commentsService = YouTubeCommentsService(
+      apiKey: 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA', // Reemplaza con tu API Key
+      videoId: widget.video.id, // Asegúrate de que este es el ID del video
+    );
+    return await commentsService.fetchComments();
+  } catch (e) {
+    print('Error al cargar comentarios: $e'); // Imprime el error
+    rethrow; // Relanza el error para que el FutureBuilder lo maneje
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +64,7 @@ class DetailVideoPage extends StatelessWidget {
             const SizedBox(height: 16.0),
             // Video title
             Text(
-              video.title,
+              widget.video.title,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -48,12 +76,12 @@ class DetailVideoPage extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  "${_formatViews(video.viewCount)} de vistas",
+                  "${_formatViews(widget.video.viewCount)} de vistas",
                   style: const TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(width: 16.0),
                 Text(
-                  _timeAgo(video.publishedAt),
+                  _timeAgo(widget.video.publishedAt),
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],
@@ -64,7 +92,7 @@ class DetailVideoPage extends StatelessWidget {
               children: [
                 // Channel image
                 CircleAvatar(
-                  backgroundImage: NetworkImage(video.thumbnailUrl), // Assuming thumbnailUrl is the channel image
+                  backgroundImage: NetworkImage(widget.video.thumbnailUrl),
                   radius: 20,
                 ),
                 const SizedBox(width: 8.0),
@@ -73,12 +101,12 @@ class DetailVideoPage extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        video.channelTitle,
+                        widget.video.channelTitle,
                         style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(width: 8.0),
                       Text(
-                        "33.2 M suscriptores", // Placeholder for subscriber count
+                        "33.2 M suscriptores",
                         style: const TextStyle(color: Colors.grey, fontSize: 14),
                       ),
                     ],
@@ -87,25 +115,50 @@ class DetailVideoPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16.0),
-            // Action buttons: like, dislike, share, etc.
+            // Action buttons
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _buildOvalButton(Icons.thumb_up, "2.5 K"), // Likes
+                  _buildOvalButton(Icons.thumb_up, "2.5 K"),
                   _buildDivider(),
-                  _buildOvalButton(Icons.thumb_down, ""), // Dislike
+                  _buildOvalButton(Icons.thumb_down, ""),
                   _buildDivider(),
-                  _buildOvalButton(Icons.share, "Compartir"), // Share
+                  _buildOvalButton(Icons.share, "Compartir"),
                   _buildDivider(),
-                  _buildOvalButton(Icons.block, "Detener anuncio"), // Stop Ad
+                  _buildOvalButton(Icons.block, "Detener anuncio"),
                   _buildDivider(),
-                  _buildOvalButton(Icons.cut, "Recortar"), // Clip
+                  _buildOvalButton(Icons.cut, "Recortar"),
                   _buildDivider(),
-                  _buildOvalButton(Icons.bookmark, "Guardar"), // Save
+                  _buildOvalButton(Icons.bookmark, "Guardar"),
                   _buildDivider(),
-                  _buildOvalButton(Icons.flag, "Denunciar"), // Report
+                  _buildOvalButton(Icons.flag, "Denunciar"),
                 ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            // Comments section
+            Text(
+              "Comentarios:",
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8.0),
+            Expanded(
+              child: FutureBuilder<List<Comment>>(
+                future: _commentsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text("Error al cargar comentarios"));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text("No hay comentarios"));
+                  } else {
+                    return ListView(
+                      children: snapshot.data!.map((comment) => _buildCommentItem(comment)).toList(),
+                    );
+                  }
+                },
               ),
             ),
           ],
@@ -115,25 +168,34 @@ class DetailVideoPage extends StatelessWidget {
     );
   }
 
-  // Button builder with icon and text inside an oval
-  Widget _buildOvalButton(IconData icon, String label) {
+  // Existing methods below...
+
+  // Build each comment item
+  Widget _buildCommentItem(Comment comment) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(30.0),
-            ),
-            child: Row(
+          // Profile image
+          CircleAvatar(
+            backgroundImage: NetworkImage(comment.profileImageUrl),
+            radius: 20,
+          ),
+          const SizedBox(width: 8.0),
+          // Comment text and like count
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(icon, color: Colors.white),
-                if (label.isNotEmpty) ...[
-                  const SizedBox(width: 8.0),
-                  Text(label, style: const TextStyle(color: Colors.white)),
-                ]
+                Text(
+                  comment.text,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                const SizedBox(height: 4.0),
+                Text(
+                  "${comment.likeCount} Me gusta",
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -142,12 +204,8 @@ class DetailVideoPage extends StatelessWidget {
     );
   }
 
-  // Divider between the buttons
-  Widget _buildDivider() {
-    return const SizedBox(width: 8.0);
-  }
+  // Button builder and other existing methods...
 
-  // Format the views with "K" for thousands and "M" for millions
   String _formatViews(int viewCount) {
     if (viewCount >= 1000000) {
       return "${(viewCount / 1000000).toStringAsFixed(1)} M";
@@ -158,7 +216,6 @@ class DetailVideoPage extends StatelessWidget {
     }
   }
 
-  // Calculate how long ago the video was published
   String _timeAgo(String publishedAt) {
     final DateTime publishDate = DateTime.parse(publishedAt);
     final Duration diff = DateTime.now().difference(publishDate);
@@ -177,6 +234,28 @@ class DetailVideoPage extends StatelessWidget {
       return "hace un momento";
     }
   }
+
+  Widget _buildOvalButton(IconData icon, String label) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[850],
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white),
+          const SizedBox(width: 4),
+          Text(label, style: const TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return const SizedBox(width: 12);
+  }
 }
+
 
 
