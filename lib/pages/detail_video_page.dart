@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_api/services/youtube_api_service.dart';
-import 'package:youtube_api/services/youtube_comments_service.dart'; // Importa el servicio de comentarios
-import 'package:intl/intl.dart'; // Para formatear el número de vistas
-import 'package:youtube_api/models/comments_page.dart'; // Importa el modelo de comentarios
+import 'package:youtube_api/services/youtube_comments_service.dart'; 
+import 'package:intl/intl.dart'; 
+import 'package:youtube_api/models/comments_page.dart';
 
 class DetailVideoPage extends StatefulWidget {
   final Video video;
@@ -25,13 +25,13 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
   Future<List<Comment>> _fetchComments() async {
   try {
     final commentsService = YouTubeCommentsService(
-      apiKey: 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA', // Reemplaza con tu API Key
-      videoId: widget.video.id, // Asegúrate de que este es el ID del video
+      apiKey: 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA',
+      videoId: widget.video.id,
     );
     return await commentsService.fetchComments();
   } catch (e) {
-    print('Error al cargar comentarios: $e'); // Imprime el error
-    rethrow; // Relanza el error para que el FutureBuilder lo maneje
+    print('Error al cargar comentarios: $e');
+    rethrow;
   }
 }
 
@@ -87,16 +87,16 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
               ],
             ),
             const SizedBox(height: 16.0),
-            // Channel info in one line
+
             Row(
               children: [
-                // Channel image
+
                 CircleAvatar(
                   backgroundImage: NetworkImage(widget.video.thumbnailUrl),
                   radius: 20,
                 ),
                 const SizedBox(width: 8.0),
-                // Channel name and subscriber count in one line
+
                 Expanded(
                   child: Row(
                     children: [
@@ -115,7 +115,7 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
               ],
             ),
             const SizedBox(height: 16.0),
-            // Action buttons
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -137,7 +137,7 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
               ),
             ),
             const SizedBox(height: 16.0),
-            // Comments section
+
             Text(
               "Comentarios:",
               style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -168,21 +168,21 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
     );
   }
 
-  // Existing methods below...
 
-  // Build each comment item
+
+
   Widget _buildCommentItem(Comment comment) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          // Profile image
+
           CircleAvatar(
             backgroundImage: NetworkImage(comment.profileImageUrl),
             radius: 20,
           ),
           const SizedBox(width: 8.0),
-          // Comment text and like count
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +204,7 @@ class _DetailVideoPageState extends State<DetailVideoPage> {
     );
   }
 
-  // Button builder and other existing methods...
+
 
   String _formatViews(int viewCount) {
     if (viewCount >= 1000000) {
