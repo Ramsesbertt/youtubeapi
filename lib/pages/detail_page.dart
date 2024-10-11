@@ -25,9 +25,9 @@ class DetailPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Redirigir a YouTube para ver el video
+
                 final url = 'https://www.youtube.com/watch?v=$videoId';
-                // Implementar un webview o redireccionar al navegador
+
               },
               child: const Text('Ver Video'),
             ),
