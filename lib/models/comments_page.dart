@@ -1,4 +1,3 @@
-// lib/models/comments_page.dart
 class Comment {
   final String profileImageUrl;
   final String text;
