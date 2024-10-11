@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_api/services/youtube_api_service.dart';
-import 'package:intl/intl.dart'; // Asegúrate de que este paquete esté en tu pubspec.yaml
-import 'detail_video_page.dart'; // Importa la página de detalles
+import 'package:intl/intl.dart';
+import 'detail_video_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                                     backgroundImage: NetworkImage(video.channelThumbnailUrl),
                                     radius: 15,
                                   ),
-                                  const SizedBox(width: 8), // Espacio entre la imagen del canal y el nombre
+                                  const SizedBox(width: 8),
                                   // Nombre del canal y detalles
                                   Expanded(
                                     child: Row(
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                                           video.channelTitle,
                                           style: const TextStyle(color: Colors.white),
                                         ),
-                                        const SizedBox(width: 8), // Espacio entre el nombre del canal y el texto de vistas/tiempo
+                                        const SizedBox(width: 8),
                                         // Vistas y tiempo
                                         Text(
                                           '${NumberFormat.compact().format(video.viewCount)} vistas - ${_timeAgo(video.publishedAt)}',
