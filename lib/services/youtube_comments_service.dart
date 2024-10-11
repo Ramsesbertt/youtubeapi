@@ -1,4 +1,4 @@
-// lib/services/youtube_comments_service.dart
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:youtube_api/models/comments_page.dart';
@@ -14,7 +14,7 @@ class YouTubeCommentsService {
 
     final response = await http.get(Uri.parse(url));
 
-    // Verificar el estado de la respuesta
+
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       return (data['items'] as List)
@@ -25,7 +25,7 @@ class YouTubeCommentsService {
               ))
           .toList();
     } else {
-      print('Error: ${response.statusCode} - ${response.body}'); // Añade esto para depurar
+      print('Error: ${response.statusCode} - ${response.body}');
       throw Exception('Failed to load comments');
     }
   }
