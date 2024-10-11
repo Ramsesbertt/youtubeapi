@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class YouTubeApiService {
-  final String apiKey = 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA'; // Tu API Key aquí
+  final String apiKey = 'AIzaSyBZOCjuwGfWTeeEx0aEZk3U6w7cr-YJHaA';
   final String baseUrl = 'https://www.googleapis.com/youtube/v3';
 
   Future<List<Video>> fetchTrendingVideos() async {
@@ -27,20 +27,20 @@ class Video {
   final String title;
   final String thumbnailUrl;
   final String channelTitle;
-  final String channelThumbnailUrl; // Nueva propiedad para la imagen del canal
-  final int viewCount; // Asegúrate de que esto sea un int
-  final String publishedAt; // Fecha de publicación
-  final int subscriberCount; // Nueva propiedad para el conteo de suscriptores
+  final String channelThumbnailUrl;
+  final int viewCount;
+  final String publishedAt;
+  final int subscriberCount;
 
   Video({
     required this.id,
     required this.title,
     required this.thumbnailUrl,
     required this.channelTitle,
-    required this.channelThumbnailUrl, // Nueva propiedad
-    required this.viewCount, // Asegúrate de que esto sea un int
-    required this.publishedAt, // Fecha de publicación
-    required this.subscriberCount, // Nueva propiedad
+    required this.channelThumbnailUrl,
+    required this.viewCount,
+    required this.publishedAt,
+    required this.subscriberCount,
   });
 
   factory Video.fromJson(Map<String, dynamic> json) {
@@ -51,13 +51,13 @@ class Video {
       channelTitle: json['snippet']['channelTitle'],
       channelThumbnailUrl: json['snippet']['thumbnails']['default'] != null 
         ? json['snippet']['thumbnails']['default']['url'] 
-        : 'URL_DE_IMAGEN_POR_DEFECTO', // Reemplaza por una URL de imagen predeterminada
+        : 'URL_DE_IMAGEN_POR_DEFECTO',
       viewCount: json['statistics']['viewCount'] != null
-          ? int.parse(json['statistics']['viewCount']) // Asegúrate de que esto sea un int
+          ? int.parse(json['statistics']['viewCount'])
           : 0,
-      publishedAt: json['snippet']['publishedAt'] ?? '', // Asigna un valor vacío si no está presente
+      publishedAt: json['snippet']['publishedAt'] ?? '',
       subscriberCount: json['statistics']['subscriberCount'] != null
-          ? int.parse(json['statistics']['subscriberCount']) // Asegúrate de que esto sea un int
+          ? int.parse(json['statistics']['subscriberCount'])
           : 0,
     );
   }
